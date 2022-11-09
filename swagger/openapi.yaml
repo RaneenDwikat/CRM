@@ -1,0 +1,564 @@
+openapi: 3.0.3
+info:
+  title: Swagger Test
+  contact:
+    email: raneen.dwikat@niftysouq.com
+  version: 1.0.11
+servers:
+  - url: http://localhost:3000/
+paths:
+
+  /customer/getwithactivateservices:
+    get:
+      tags:
+        - customer
+      summary: get customers with their active services
+      operationId: getCustumerwithActiveServices
+      responses:
+        default:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getwithactivateservices'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/getwithactivateservices'
+  /customer/getwithservices/{_id}:
+    get:
+      tags:
+        - customer
+      summary: get customer with his services
+      operationId: getCustumerwithServices
+      parameters:
+        - name: _id
+          in: path
+          description: id that need to spacify which customer
+          required: true
+          schema:
+            type: string
+      responses:
+        default:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getCustumerwithServices'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/getCustumerwithServices'
+  /customer/add:
+    post:
+      tags:
+        - customer
+      summary: Create customer
+      operationId: createCustomer
+      requestBody:
+        description: Created customer object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Customer'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Customer'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Customer'
+      responses:
+        default:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Customer'
+  /customer/update/{_id}:
+    put:
+      tags:
+        - customer
+      summary: Update customer
+      description: This can only be done by the employee.
+      operationId: updateCustomer
+      parameters:
+        - name: _id
+          in: path
+          description: id that need to be deleted
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Update an existent user in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Customer'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Customer'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Customer'
+      responses:
+        default:
+          description: successful operation
+  /customer/deleteservice/{_id}:
+    put:
+      tags:
+        - customer
+      summary: Update customer
+      description: This can only be done by the employee.
+      operationId: deleteservice
+      parameters:
+        - name: _id
+          in: path
+          description: id that need to be deleted
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Update an existent user in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Service'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Service'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Service'
+      responses:
+        default:
+          description: successful operation
+  /customer/addservice/{_id}:
+    put:
+      tags:
+        - customer
+      summary: Update customer
+      description: This can only be done by the employee.
+      operationId: addservice
+      parameters:
+        - name: _id
+          in: path
+          description: id that need to be deleted
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Update an existent user in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Customer'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Customer'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Customer'
+      responses:
+        default:
+          description: successful operation
+  /customer/delete/{_id}:
+    delete:
+      tags:
+        - customer
+      summary: Delete customer
+      description: This can only be done by the employee.
+      operationId: deleteCustomer
+      parameters:
+        - name: _id
+          in: path
+          description: The name that needs to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        '400':
+          description: Invalid username supplied
+        '404':
+          description: User not found
+  /employee/add:
+    post:
+      tags:
+        - employee
+      summary: Create employee
+      operationId: createEmployee
+      requestBody:
+        description: Created employee object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Employee'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Employee'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Employee'
+      responses:
+        default:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Employee'
+  /service/add:
+    post:
+      tags:
+        - service
+      summary: Create service
+      operationId: createService
+      requestBody:
+        description: Created service object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Service'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Service'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Service'
+      responses:
+        default:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Service'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Service'
+  /service/updateservice/{_id}:
+    put:
+      tags:
+        - service
+      summary: Update Service
+      description: This can only be done by the employee.
+      operationId: updateservice
+      parameters:
+        - name: _id
+          in: path
+          description: id that need to be updated
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Update an existent user in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Service'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Service'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Service'
+      responses:
+        default:
+          description: successful operation
+  /service/delete/{_id}:
+    delete:
+      tags:
+        - service
+      summary: Delete service
+      description: This can only be done by the super admin.
+      operationId: deleteService
+      parameters:
+        - name: _id
+          in: path
+          description: The name that needs to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        '400':
+          description: Invalid username supplied
+        '404':
+          description: User not found
+  /service/stopservice/{_id}:
+    put:
+      tags:
+        - service
+      summary: stop Service
+      description: This can only be done by the employee.
+      operationId: stopservice
+      parameters:
+        - name: _id
+          in: path
+          description: id that need to be updated
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Update an existent user in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Service'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Service'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Service'
+      responses:
+        default:
+          description: successful operation
+  /super/login:
+    post:
+      tags:
+        - super
+      summary: login
+      operationId: login
+      requestBody:
+        description: login
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Super'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Super'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Super'
+      responses:
+        default:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Super'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Super'
+
+
+          
+components:
+  schemas:
+    Super:
+      required:
+        - email
+        - password
+      type: object
+      properties:
+        _id:
+          type: string
+          readOnly: true
+          example: 63543c168d39fb31ddbc3a60
+        email:
+          type: string
+          format: email
+          example: raneen@gmail.com
+        password:
+          type: string
+          description: admin password
+          format: password
+          example: 123012301230
+        last_login:
+          type: string
+          description: last login
+          format: date
+          example: 2022-11-08T13:29:21.000+00:00
+      xml:
+        name: super
+    Customer:
+      required:
+        - username
+        - email
+        - password
+      type: object
+      properties:
+        _id:
+          type: string
+          readOnly: true
+          example: 63543c168d39fb31ddbc3a60
+        username:
+          type: string
+          example: customer_1
+        email:
+          type: string
+          format: email
+          example: customer_1@gmail.com
+        password:
+          type: string
+          description: admin password
+          format: password
+          example: 123012301230
+        last_login:
+          type: string
+          description: last login
+          format: date
+          example: 2022-11-08T13:29:21.000+00:00
+        services:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                example: 63543c168d39fb31ddbc3a60
+      xml:
+        name: customer
+    Employee:
+      required:
+        - username
+        - email
+        - password
+      type: object
+      properties:
+        _id:
+          type: string
+          readOnly: true
+          example: 63543c168d39fb31ddbc3a60
+        username:
+          type: string
+          example: employee_1
+        email:
+          type: string
+          format: email
+          example: employee_1@gmail.com
+        password:
+          type: string
+          description: admin password
+          format: password
+          example: 123012301230
+        last_login:
+          type: string
+          description: last login
+          format: date
+          example: 2022-11-08T13:29:21.000+00:00
+      xml:
+        name: employee
+    Service:
+      type: object
+      properties:
+        _id:
+          type: string
+          readOnly: true
+          example: 63543c168d39fb31ddbc3a60
+        title:
+          type: string
+          example: 1st service
+        description:
+          type: string
+          example: 1st service description
+      xml:
+        name: service
+        
+    getwithactivateservices:
+      type: object
+      properties:
+        username:
+          type: string
+          example: employee_1
+        email:
+          type: string
+          format: email
+          example: employee_1@gmail.com
+        last_login:
+          type: string
+          description: last login
+          format: date
+          example: 2022-11-08T13:29:21.000+00:00
+        createdAt:
+          type: string
+          description: last login
+          format: date
+          example: 2022-11-08T13:29:21.000+00:00
+        updatedAt:
+          type: string
+          description: last login
+          format: date
+          example: 2022-11-08T13:29:21.000+00:00
+        services:
+          type: array
+          items:
+            type: object
+            properties:
+              title:
+                type: string
+                example: 1st service
+              description:
+                type: string
+                example: 1st service description 
+              createdAt:
+                type: string
+                description: last login
+                format: date
+                example: 2022-11-08T13:29:21.000+00:00
+              updatedAt:
+                type: string
+                description: last login
+                format: date
+                example: 2022-11-08T13:29:21.000+00:00
+      xml:
+        name: getwithactivateservices
+
+    getCustumerwithServices:
+      type: object
+      properties:
+        username:
+          type: string
+          example: employee_1
+        email:
+          type: string
+          format: email
+          example: employee_1@gmail.com
+        password:
+          type: string
+          description: admin password
+          format: password
+          example: 123012301230
+        last_login:
+          type: string
+          description: last login
+          format: date
+          example: 2022-11-08T13:29:21.000+00:00
+        createdAt:
+          type: string
+          description: last login
+          format: date
+          example: 2022-11-08T13:29:21.000+00:00
+        updatedAt:
+          type: string
+          description: last login
+          format: date
+          example: 2022-11-08T13:29:21.000+00:00
+        services:
+          type: array
+          items:
+            type: object
+            properties:
+              title:
+                type: string
+                example: 1st service
+              description:
+                type: string
+                example: 1st service description 
+              createdAt:
+                type: string
+                description: last login
+                format: date
+                example: 2022-11-08T13:29:21.000+00:00
+              updatedAt:
+                type: string
+                description: last login
+                format: date
+                example: 2022-11-08T13:29:21.000+00:00
+      xml:
+        name: getCustumerwithServices       
+              
+
+
