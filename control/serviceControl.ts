@@ -23,44 +23,5 @@ export default class serviceControl{
            res.status(500).json({error:error}) 
         }
     }
-    stopService=async (req:Request,res:Response,next:NextFunction)=> {
-        const{_id}=req.params
-        const{service_id}=req.body
-        try {
-            await Service.updateOne(
-                {_id: service_id,},
-                {
-                    $pull: {
-                        activate:_id,
-                    },
-                });
-                await Service.updateOne(
-                    {_id: service_id,},
-                    {
-                        $push: {
-                            stop:_id,
-                        },
-                    })
-            return res.status(200).json({status:true,msg:"stopped"})
-        } catch (error) {
-           console.log(error)
-           res.status(500).json({error:error}) 
-        }
-    }
-    updateService=async (req:Request,res:Response,next:NextFunction)=> {
-        const{_id}=req.params
-        const{title,description}=req.body
-        try {
-            await Service.findByIdAndUpdate(
-                {_id},
-                {
-                    title,description
-                })
-               
-            return res.status(200).json({status:true,msg:"updated"})
-        } catch (error) {
-           console.log(error)
-           res.status(500).json({error:error}) 
-        }
-    }
+
 }

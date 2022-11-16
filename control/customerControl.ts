@@ -1,7 +1,9 @@
 import { NextFunction, Request, Response } from "express";
+import mongoose from "mongoose";
 import { setCache, getCache } from "../middleware/cache";
 import Customer from "../model/customer";
-import service from "../model/service";
+import customerService from "../model/customerService";
+import CustomerService from "../model/customerService";
 import Service from "../model/service";
 
 export default class CustomerControl {
@@ -14,53 +16,45 @@ export default class CustomerControl {
             return res.status(500).json({ error: error });
         }
     };
-
     addService = async (req: Request, res: Response, next: NextFunction) => {
-        const { service_id} = req.body;
-        const { _id } = req.params;
-        console.log(req.body.service_id)
+        const { service,customer} = req.body;
         try {
-            await Customer.updateOne(
-                { _id}, {$push: { services: service_id }, }
-            );
-            await Service.updateOne(
-                {_id:service_id}, {$push: { activate: _id }, }
-            );
+            const result=await new CustomerService({service,customer,status:"active"}).save();
             return res.status(200).json({ status: true, msg: "added" });
         } catch (error) {
             return res.status(500).json({ status: false, msg: error });
         }
     };
-
     deleteService = async (req: Request, res: Response, next: NextFunction) => {
-        const { service_id} = req.body;
-        const { _id } = req.params;
-        console.log(req.params)
+        const { service,customer} = req.params;
+
         try {
-            await Customer.updateOne(
-                { _id,},
-                {
-                    $pull: {
-                        services:service_id,
-                    },
-                }
-            );
-            await Service.updateOne(
-                {_id: service_id,},
-                {
-                    $pull: {
-                        activate:_id,
-                        stop:_id,
-                    },
-                }
-            );
+           const result=await CustomerService.findOneAndDelete({service,customer});
             return res.status(200).json({ status: true, msg: "deleted"});
         } catch (error) {
             return res.status(500).json({ status: false, msg: error });
         }
     };
+    stopService = async (req: Request, res: Response, next: NextFunction) => {
+        const { service,customer} = req.body;
 
-   
+        try {
+           const result=await CustomerService.findOneAndUpdate({service,customer},{status:"stopped"});
+            return res.status(200).json({ status: true, msg: "stopped"});
+        } catch (error) {
+            return res.status(500).json({ status: false, msg: error });
+        }
+    };
+    activateService = async (req: Request, res: Response, next: NextFunction) => {
+        const { service,customer} = req.body;
+
+        try {
+           const result=await CustomerService.findOneAndUpdate({service,customer},{status:"activated"});
+            return res.status(200).json({ status: true, msg: "activated"});
+        } catch (error) {
+            return res.status(500).json({ status: false, msg: error });
+        }
+    };
     getwithServices=async(req: Request, res: Response, next: NextFunction)=>{
         const {_id}=req.params
         try {
@@ -69,9 +63,38 @@ export default class CustomerControl {
                 return res.status(200).json({status:true,msg:result})
             }
            else{
-            const result= await Customer.findOne({_id}).populate({
-                path:"services",select:"-activate -__v -_id -stop"
-                }).exec()
+            const result= await Customer.aggregate([
+               {$match:{_id:  new mongoose.Types.ObjectId(_id)}},
+             {$lookup:{
+                from:'customerservices',
+                foreignField:'customer',
+                localField:'_id',
+                pipeline:[
+                    {
+                    $lookup:{
+                        from:'services',
+                        foreignField:'_id',
+                        localField:'service',
+                        pipeline:[{
+                            $project:{createdAt:0,updatedAt:0,__v:0,_id:0}
+                        }],
+                        as:'services'
+                    }},{
+                        $project:{createdAt:0,updatedAt:0,__v:0,_id:0,service:0,customer:0}
+                    },{
+                        $group:{_id:"$status",
+                        services:{
+                                $push:{ 
+                                title:'$services.title',
+                                description:'$services.description'
+                            }
+                        }
+                    }
+                    }],
+                as:'customerService'
+             }}
+                
+            ]).project({createdAt:0,updatedAt:0,customer:0,service:0,__v:0})
                 if(result){
                     await setCache(`get_${_id}_withServices`,JSON.stringify(result),3600)
                     return res.status(200).json({status:true,msg:result})
@@ -82,26 +105,82 @@ export default class CustomerControl {
         }
     };
 
-    getwithActivateServices=async(req: Request, res: Response, next: NextFunction)=>{
+    getWithActivateServices=async(req: Request, res: Response, next: NextFunction)=>{
         try {
             const result=await getCache(`getwithActiveServices`)
             if(result!=null){
                 return res.status(200).json({status:true,msg:result})
             }
            else{
+            // const result= await customerService.aggregate([
+            //     {
+            //         $match:{status:'active'}
+            //     },
+            //     {$lookup:{
+            //         from:"services",
+            //         localField:"service",
+            //         pipeline:[
+            //             {$project:{_id:0,last_login:0,createdAt:0,updatedAt:0,__v:0,password:0}},
+                      
+            //         ],
+            //         foreignField:"_id",
+            //         as:"services"
+            //     }},
+            //     {$lookup:{
+            //         from:'customers',
+            //         localField:'customer',
+            //         foreignField:'_id',
+            //         as:'customers'
+            //     }},
+            //     {$group:{_id:"$customers.username",
+               
+            //     services:{
+                    
+            //         $push:{
+            //             title:'$services.title',
+            //             description:'$services.description',
+            //             status:'$status'
+            //         }
+            //     }
+            //     },
+            // },
+                
+            // ]).project({createdAt:0,updatedAt:0,customer:0,service:0,__v:0})
+
             const result= await Customer.aggregate([
-                {$lookup:{
-                    from:'services',
-                    localField:'_id',
-                    foreignField:'activate',
-                    pipeline:[{
-                        $project:{
-                            __v:0,_id:0,activate:0,stop:0
+              {$lookup:{
+                 from:'customerservices',
+                 foreignField:'customer',
+                 localField:'_id',
+                 pipeline:[
+                  {$match:{status:"active"}},
+                     {
+                     $lookup:{
+                         from:'services',
+                         foreignField:'_id',
+                         localField:'service',
+                         pipeline:[{
+                             $project:{createdAt:0,updatedAt:0,__v:0,_id:0}
+                         }],
+                         as:'services'
+                     }},{
+                         $project:{createdAt:0,updatedAt:0,__v:0,_id:0,service:0,customer:0}
+                     },{
+                        $group:{_id:"$status",services:{
+                            $push:{
+                                title:'$services.title',
+                                description:'$services.description'
+                            }
                         }
+                    }
+                     },
+                    {
+                        $project:{_id:0}
                     }],
-                    as:"services"
-                }}
-            ]).project({ __v: 0 ,_id:0});
+                 as:'customerService'
+              }}
+                 
+             ]).project({createdAt:0,updatedAt:0,customer:0,service:0,__v:0})
             if(result){
                 await setCache(`getwithActiveServices`,JSON.stringify(result),3600)
                 return res.status(200).json({status:true,msg:result})

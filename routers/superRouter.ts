@@ -8,7 +8,7 @@ import {limiter} from '../middleware/rateLimitter'
 const superRouter=express.Router()
 const control=new SuperControl()
 
-superRouter.post('/login',limiter(60,30),checkValidation(adminSchemaValidation),auth('super'),control.superLogin)
+superRouter.post('/login',auth('super'),limiter(60,30),checkValidation(adminSchemaValidation),control.superLogin)
 
 
 export default superRouter

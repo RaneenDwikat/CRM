@@ -1,4 +1,4 @@
-openapi: 3.0.3
+openapi: 3.0.0
 info:
   title: Swagger Test
   contact:
@@ -43,15 +43,17 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/getCustumerwithServices'
+                $ref: '#/components/schemas/getwithservices'
             application/xml:
               schema:
-                $ref: '#/components/schemas/getCustumerwithServices'
+                $ref: '#/components/schemas/getwithservices'
   /customer/add:
     post:
       tags:
         - customer
       summary: Create customer
+      security:
+      - bearerAuth: [] 
       operationId: createCustomer
       requestBody:
         description: Created customer object
@@ -80,6 +82,8 @@ paths:
       tags:
         - customer
       summary: Update customer
+      security:
+      - bearerAuth: [] 
       description: This can only be done by the employee.
       operationId: updateCustomer
       parameters:
@@ -104,61 +108,52 @@ paths:
       responses:
         default:
           description: successful operation
-  /customer/deleteservice/{_id}:
-    put:
+  /customer/deleteservice/{customer}/{service}:
+    delete:
       tags:
         - customer
-      summary: Update customer
+      summary: delete service for customer
+      security:
+      - bearerAuth: [] 
       description: This can only be done by the employee.
       operationId: deleteservice
       parameters:
-        - name: _id
+        - name: customer
           in: path
           description: id that need to be deleted
           required: true
           schema:
             type: string
-      requestBody:
-        description: Update an existent user in the store
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Service'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Service'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Service'
+        - name: service
+          in: path
+          description: id that need to be deleted
+          required: true
+          schema:
+            type: string
       responses:
         default:
           description: successful operation
-  /customer/addservice/{_id}:
-    put:
+  /customer/addservice:
+    post:
       tags:
         - customer
-      summary: Update customer
+      summary: add service for customer
+      security:
+      - bearerAuth: []
       description: This can only be done by the employee.
       operationId: addservice
-      parameters:
-        - name: _id
-          in: path
-          description: id that need to be deleted
-          required: true
-          schema:
-            type: string
       requestBody:
         description: Update an existent user in the store
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Customer'
+              $ref: '#/components/schemas/CustomerService'
           application/xml:
             schema:
-              $ref: '#/components/schemas/Customer'
+              $ref: '#/components/schemas/CustomerService'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Customer'
+              $ref: '#/components/schemas/CustomerService'
       responses:
         default:
           description: successful operation
@@ -167,6 +162,8 @@ paths:
       tags:
         - customer
       summary: Delete customer
+      security:
+      - bearerAuth: []
       description: This can only be done by the employee.
       operationId: deleteCustomer
       parameters:
@@ -181,11 +178,60 @@ paths:
           description: Invalid username supplied
         '404':
           description: User not found
+  /customer/stopservice:
+    put:
+      tags:
+        - service
+      summary: stop Service
+      security:
+      - bearerAuth: []
+      description: This can only be done by the employee.
+      operationId: stopservice
+      requestBody:
+        description: Update an existent user in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerService'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/CustomerService'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Service'
+      responses:
+        default:
+          description: successful operation
+  /customer/activateservice:
+    put:
+      tags:
+        - service
+      summary: activate Service
+      security:
+      - bearerAuth: []
+      description: This can only be done by the employee.
+      operationId: activateservice
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerService'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/CustomerService'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Service'
+      responses:
+        default:
+          description: successful operation
   /employee/add:
     post:
       tags:
         - employee
       summary: Create employee
+      security:
+      - bearerAuth: []
       operationId: createEmployee
       requestBody:
         description: Created employee object
@@ -214,6 +260,8 @@ paths:
       tags:
         - service
       summary: Create service
+      security:
+      - bearerAuth: []
       operationId: createService
       requestBody:
         description: Created service object
@@ -242,6 +290,8 @@ paths:
       tags:
         - service
       summary: Update Service
+      security:
+      - bearerAuth: []
       description: This can only be done by the employee.
       operationId: updateservice
       parameters:
@@ -285,35 +335,6 @@ paths:
           description: Invalid username supplied
         '404':
           description: User not found
-  /service/stopservice/{_id}:
-    put:
-      tags:
-        - service
-      summary: stop Service
-      description: This can only be done by the employee.
-      operationId: stopservice
-      parameters:
-        - name: _id
-          in: path
-          description: id that need to be updated
-          required: true
-          schema:
-            type: string
-      requestBody:
-        description: Update an existent user in the store
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Service'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Service'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Service'
-      responses:
-        default:
-          description: successful operation
   /super/login:
     post:
       tags:
@@ -346,6 +367,11 @@ paths:
 
           
 components:
+  securitySchemes:
+    bearerAuth:            # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     Super:
       required:
@@ -401,14 +427,6 @@ components:
           description: last login
           format: date
           example: 2022-11-08T13:29:21.000+00:00
-        services:
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: string
-                example: 63543c168d39fb31ddbc3a60
       xml:
         name: customer
     Employee:
@@ -456,10 +474,34 @@ components:
           example: 1st service description
       xml:
         name: service
+    CustomerService:
+      type: object
+      properties:
+        _id:
+          type: string
+          readOnly: true
+          example: 63543c168d39fb31ddbc3a60
+        customer:
+          type: string
+          example: 636a84b56e575c23fa545fa5
+        service:
+          type: string
+          example: 636c1d3c18b18fcf9e3f6998
+        status:
+          type: string
+          example: active
+          enum:
+            - active
+            - stopped
+      xml:
+        name: customerservice
         
     getwithactivateservices:
       type: object
       properties:
+        _id:
+          type: string
+          example: 63543c168d39fb31ddbc3a60
         username:
           type: string
           example: employee_1
@@ -472,43 +514,31 @@ components:
           description: last login
           format: date
           example: 2022-11-08T13:29:21.000+00:00
-        createdAt:
-          type: string
-          description: last login
-          format: date
-          example: 2022-11-08T13:29:21.000+00:00
-        updatedAt:
-          type: string
-          description: last login
-          format: date
-          example: 2022-11-08T13:29:21.000+00:00
-        services:
+        customerService:
           type: array
           items:
             type: object
             properties:
-              title:
-                type: string
-                example: 1st service
-              description:
-                type: string
-                example: 1st service description 
-              createdAt:
-                type: string
-                description: last login
-                format: date
-                example: 2022-11-08T13:29:21.000+00:00
-              updatedAt:
-                type: string
-                description: last login
-                format: date
-                example: 2022-11-08T13:29:21.000+00:00
+              services:
+                type: array
+                items: 
+                  type: object
+                  properties:
+                    description:
+                      type: string
+                      example: 1st service description 
+                    title:
+                      type: string
+                      example: 1st service
       xml:
         name: getwithactivateservices
 
-    getCustumerwithServices:
+    getwithservices:
       type: object
       properties:
+        _id:
+          type: string
+          example: 63543c168d39fb31ddbc3a60
         username:
           type: string
           example: employee_1
@@ -526,39 +556,27 @@ components:
           description: last login
           format: date
           example: 2022-11-08T13:29:21.000+00:00
-        createdAt:
-          type: string
-          description: last login
-          format: date
-          example: 2022-11-08T13:29:21.000+00:00
-        updatedAt:
-          type: string
-          description: last login
-          format: date
-          example: 2022-11-08T13:29:21.000+00:00
-        services:
+        customerService:
           type: array
           items:
             type: object
             properties:
-              title:
+              status:
                 type: string
-                example: 1st service
-              description:
-                type: string
-                example: 1st service description 
-              createdAt:
-                type: string
-                description: last login
-                format: date
-                example: 2022-11-08T13:29:21.000+00:00
-              updatedAt:
-                type: string
-                description: last login
-                format: date
-                example: 2022-11-08T13:29:21.000+00:00
+                example: active
+              services:
+                type: array
+                items: 
+                  type: object
+                  properties:
+                    description:
+                      type: string
+                      example: 1st service description 
+                    title:
+                      type: string
+                      example: 1st service
       xml:
-        name: getCustumerwithServices       
+        name: getwithservices       
               
 
 

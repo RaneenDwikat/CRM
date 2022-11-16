@@ -5,7 +5,6 @@ interface customer {
   email: string;
   password: string;
   last_login: Date;
-  services:Array<mongoose.Schema.Types.ObjectId>;
 }
 
 const customerSchema = new mongoose.Schema({
@@ -18,10 +17,6 @@ const customerSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  services:[{
-    type: mongoose.Schema.Types.ObjectId,
-    ref:'services'
-  }],
   last_login: {
     type: Date,
     default: Date.now(),

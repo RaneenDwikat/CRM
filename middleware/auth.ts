@@ -27,6 +27,8 @@ export default function auth(role: string) {
                         return res.status(401).json({ error: "Not Authenticated!" });
                     }
                 }
+            }else{
+                return res.status(401).json({ error: "Not authorization!" });
             }
         } catch (error) {
             return res.status(401).json({ error: error });

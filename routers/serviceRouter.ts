@@ -8,8 +8,7 @@ import {limiter} from '../middleware/rateLimitter'
 const serviceRouter=express.Router()
 const control=new ServiceControl()
 
-serviceRouter.post('/add',limiter(60,30),checkValidation(serviceSchemaValidation),auth('super'),control.addService)
-serviceRouter.delete('/delete/:_id',limiter(60,30),auth('super'),control.deleteService)
-serviceRouter.put('/stopservice/:_id',auth('employee'),control.stopService)
-serviceRouter.put('/updateservice/:_id',auth('employee'),control.updateService)
+serviceRouter.post('/add',auth('super'),limiter(60,30),checkValidation(serviceSchemaValidation),control.addService)
+serviceRouter.delete('/delete/:_id',auth('super'),limiter(60,30),control.deleteService)
+
 export default serviceRouter
