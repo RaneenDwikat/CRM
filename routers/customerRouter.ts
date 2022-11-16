@@ -14,7 +14,7 @@ const control=new CustumerControl()
 // to add new customer
 customerRouter.post('/add',auth('employee'),limiter(60,30),checkValidation(customerSchemaValidation),control.addCustomer)
 // to add service to spacific customer
-customerRouter.post("/addservice",auth('employee'),limiter(60,30),checkValidation(customerSchemaValidation),control.addService)
+customerRouter.post("/addservice",auth('employee'),limiter(60,30),checkValidation(customerServiceSchemaValidation),control.addService)
 // to delete spacific service for a spacific customer
 customerRouter.delete("/deleteservice/:customer/:service",auth('employee'),limiter(60,30),control.deleteService)
 // stop spacific service for spacific customer
