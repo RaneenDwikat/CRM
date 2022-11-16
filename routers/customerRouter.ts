@@ -3,6 +3,7 @@ import CustumerControl from '../control/customerControl'
 import { checkValidation } from '../middleware/validation' 
 import  auth  from '../middleware/auth' 
 import {customerSchemaValidation} from '../validation/customerValidation'
+import {customerServiceSchemaValidation} from '../validation/customerServiceValidation'
 import {limiter} from '../middleware/rateLimitter'
 
 
@@ -13,7 +14,7 @@ const control=new CustumerControl()
 // to add new customer
 customerRouter.post('/add',auth('employee'),limiter(60,30),checkValidation(customerSchemaValidation),control.addCustomer)
 // to add service to spacific customer
-customerRouter.post("/addservice",auth('employee'),limiter(60,30),control.addService)
+customerRouter.post("/addservice",auth('employee'),limiter(60,30),checkValidation(customerSchemaValidation),control.addService)
 // to delete spacific service for a spacific customer
 customerRouter.delete("/deleteservice/:customer/:service",auth('employee'),limiter(60,30),control.deleteService)
 // stop spacific service for spacific customer
