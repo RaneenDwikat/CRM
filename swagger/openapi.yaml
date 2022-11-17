@@ -514,22 +514,17 @@ components:
           description: last login
           format: date
           example: 2022-11-08T13:29:21.000+00:00
-        customerService:
+        activeServices:
           type: array
           items:
             type: object
             properties:
-              services:
-                type: array
-                items: 
-                  type: object
-                  properties:
-                    description:
-                      type: string
-                      example: 1st service description 
-                    title:
-                      type: string
-                      example: 1st service
+              description:
+                type: string
+                example: 1st service description 
+              title:
+                type: string
+                example: 1st service
       xml:
         name: getwithactivateservices
 
@@ -556,7 +551,7 @@ components:
           description: last login
           format: date
           example: 2022-11-08T13:29:21.000+00:00
-        customerService:
+        customerServices:
           type: array
           items:
             type: object
